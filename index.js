@@ -2,7 +2,7 @@ const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const typeDefs = require('./typeDefs');
 const resolvers = require('./resolvers');
-const pool = require('./db'); // CRITICAL: Added this to talk to the DB
+const pool = require('./db'); 
 
 async function startServer() {
   const app = express();
@@ -32,7 +32,7 @@ async function startServer() {
     });
   });
 
-  // UPDATE STATUS ENDPOINT (Used by Person A's Workflow)
+  // UPDATE STATUS ENDPOINT 
   app.patch('/api/claims/:id/status', async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
@@ -44,7 +44,7 @@ async function startServer() {
     }
   });
 
-  // CRITICAL: Start the actual listener
+
   const PORT = 4000;
   app.listen(PORT, () => {
     console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);

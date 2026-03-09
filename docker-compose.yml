@@ -15,7 +15,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  # Your Node.js App Service
+  # Node.js App Service
   app:
     build: .
     container_name: insurance-app
@@ -26,7 +26,7 @@ services:
       - DB_USER=person_c
       - DB_PASSWORD=password123
       - DB_NAME=insurance_db
-      - DB_HOST=db # Important: Use the service name 'db' as the host
+      - DB_HOST=db 
     depends_on:
       - db
 

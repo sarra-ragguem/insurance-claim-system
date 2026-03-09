@@ -1,18 +1,19 @@
-Claim Submission (GraphQL)
-URL: http://localhost:4000/graphql
+###  Claim Submission (GraphQL)
+* **Endpoint:** `http://localhost:4000/graphql`
+* **Action:** `mutation { submitClaim(...) }`
+* **Description:** Entry point for new claims. Sets initial state to `SUBMITTED`.
 
-Action: Use mutation submitClaim to start a process.
+###  Fraud Detection (REST)
+* **Endpoint:** `POST http://localhost:4000/api/fraud/check`
+* **Body:** `{ "amount": number }`
+* **Response:** `{ "riskLevel": "LOW" | "HIGH" }`
 
-Fraud Detection (REST)
-URL: POST http://localhost:4000/api/fraud/check
+###  Compensation Calculation (REST)
+* **Endpoint:** `POST http://localhost:4000/api/calculate`
+* **Body:** `{ "amountRequested": number }`
+* **Response:** `{ "finalAmount": string }`
 
-Body: {"amount": number}
-
-Response: {"riskLevel": "LOW" | "HIGH"}
-
-Compensation Calculation (REST)
-URL: POST http://localhost:4000/api/calculate
-
-Body: {"amountRequested": number}
-
-Response: {"finalAmount": string}
+###  State Machine Update (REST)
+* **Endpoint:** `PATCH http://localhost:4000/api/claims/:id/status`
+* **Body:** `{ "status": "string" }`
+* **Valid States:** `VERIFIED`, `VALIDATED`, `UNDER_REVIEW`, `APPROVED`, `REJECTED`, `PAID`.
