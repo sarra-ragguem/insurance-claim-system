@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  # The Database Service
+  db:
+    image: postgres
+    container_name: insurance-db
+    restart: always
+    environment:
+      POSTGRES_USER: person_c
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: insurance_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Your Node.js App Service
+  app:
+    build: .
+    container_name: insurance-app
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      - DB_USER=person_c
+      - DB_PASSWORD=password123
+      - DB_NAME=insurance_db
+      - DB_HOST=db # Important: Use the service name 'db' as the host
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
