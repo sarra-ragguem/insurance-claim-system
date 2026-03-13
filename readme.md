@@ -42,11 +42,11 @@ The system is fully containerized to ensure cross-platform compatibility and sca
 
 ---
 
-## 4. Database Access 🗄️
+## 4. Database Access 
 To manually verify that the State Machine is updating correctly, run the following command in your terminal:
 
 ```bash
-docker exec -it insurance-db psql -U person_c -d insurance_db -c "SELECT * FROM claims;"
+docker exec -it insurance-db psql -U insurance_admin -d insurance_db -c "SELECT * FROM claims;"
 ```
 ## 5. API Testing & Documentation 🧪 (30 pts)
 

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="IdentityVerificationService"
+             targetNamespace="http://insurance-claim-system.com/identity"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://insurance-claim-system.com/identity"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <!-- Types Definition -->
+    <types>
+        <xsd:schema targetNamespace="http://insurance-claim-system.com/identity">
+            <!-- Request: Input for identity verification -->
+            <xsd:element name="VerifyIdentityRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="nationalId" type="xsd:string"/>
+                        <xsd:element name="fullName" type="xsd:string"/>
+                        <xsd:element name="dateOfBirth" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Response: Output of identity verification -->
+            <xsd:element name="VerifyIdentityResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="isValid" type="xsd:boolean"/>
+                        <xsd:element name="verificationCode" type="xsd:string"/>
+                        <xsd:element name="message" type="xsd:string"/>
+                        <xsd:element name="timestamp" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+
+    <!-- Message Definitions -->
+    <message name="VerifyIdentityInput">
+        <part name="parameters" element="tns:VerifyIdentityRequest"/>
+    </message>
+    <message name="VerifyIdentityOutput">
+        <part name="parameters" element="tns:VerifyIdentityResponse"/>
+    </message>
+
+    <!-- Port Type (Interface) -->
+    <portType name="IdentityServicePortType">
+        <operation name="verifyIdentity">
+            <input message="tns:VerifyIdentityInput"/>
+            <output message="tns:VerifyIdentityOutput"/>
+        </operation>
+    </portType>
+
+    <!-- Binding -->
+    <binding name="IdentityServiceBinding" type="tns:IdentityServicePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="verifyIdentity">
+            <soap:operation soapAction="http://insurance-claim-system.com/identity/verifyIdentity"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <!-- Service Definition -->
+    <service name="IdentityVerificationService">
+        <documentation>SOAP Service for Customer Identity Verification - Insurance Claim System</documentation>
+        <port name="IdentityServicePort" binding="tns:IdentityServiceBinding">
+            <soap:address location="http://localhost:4001/soap/identity"/>
+        </port>
+    </service>
+
+</definitions>

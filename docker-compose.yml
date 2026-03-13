@@ -1,21 +1,29 @@
 version: '3.8'
 
 services:
-  # The Database Service
+  # ══════════════════════════════════════════════════════════════
+  # DATABASE SERVICE (Shared by all services)
+  # ══════════════════════════════════════════════════════════════
   db:
-    image: postgres
+    image: postgres:16
     container_name: insurance-db
     restart: always
     environment:
-      POSTGRES_USER: person_c
+      POSTGRES_USER: insurance_admin
       POSTGRES_PASSWORD: password123
       POSTGRES_DB: insurance_db
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - insurance-network
 
-  # Node.js App Service
+  # ══════════════════════════════════════════════════════════════
+  # PERSON C (Sarra): GraphQL & REST Services
+  # Port 4000 - Main API Gateway
+  # ══════════════════════════════════════════════════════════════
   app:
     build: .
     container_name: insurance-app
@@ -23,12 +31,58 @@ services:
     ports:
       - "4000:4000"
     environment:
-      - DB_USER=person_c
+      - DB_USER=insurance_admin
       - DB_PASSWORD=password123
       - DB_NAME=insurance_db
       - DB_HOST=db 
     depends_on:
       - db
+    networks:
+      - insurance-network
+
+  # ══════════════════════════════════════════════════════════════
+  # SOAP Identity Verification Service
+  # Port 4001 - Identity Verification via SOAP
+  # ══════════════════════════════════════════════════════════════
+  identity-service:
+    build: ./identity-service
+    container_name: insurance-identity-soap
+    restart: always
+    ports:
+      - "4001:4001"
+    environment:
+      - DB_USER=insurance_admin
+      - DB_PASSWORD=password123
+      - DB_NAME=insurance_db
+      - DB_HOST=db
+    depends_on:
+      - db
+    networks:
+      - insurance-network
+
+  # ══════════════════════════════════════════════════════════════
+  # gRPC Policy Validation Service
+  # Port 4002 - Policy Validation via gRPC
+  # ══════════════════════════════════════════════════════════════
+  policy-service:
+    build: ./policy-service
+    container_name: insurance-policy-grpc
+    restart: always
+    ports:
+      - "4002:4002"
+    environment:
+      - DB_USER=insurance_admin
+      - DB_PASSWORD=password123
+      - DB_NAME=insurance_db
+      - DB_HOST=db
+    depends_on:
+      - db
+    networks:
+      - insurance-network
+
+networks:
+  insurance-network:
+    driver: bridge
 
 volumes:
   postgres_data:
