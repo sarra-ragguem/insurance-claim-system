@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package policy;
+
+option java_package = "com.insuranceclaimsystem.policy";
+option java_outer_classname = "PolicyServiceProto";
+
+// Policy Validation Service - Insurance Claim System
+// This service validates if a policy covers a specific claim type
+
+service PolicyService {
+    // Validate if a policy covers a specific claim type
+    rpc ValidatePolicy (PolicyRequest) returns (PolicyResponse);
+    
+    // Get policy details
+    rpc GetPolicyDetails (PolicyIdRequest) returns (PolicyDetails);
+    
+    // Check policy status (active/expired/suspended)
+    rpc CheckPolicyStatus (PolicyIdRequest) returns (PolicyStatusResponse);
+}
+
+// Request message for policy validation
+message PolicyRequest {
+    string policy_id = 1;      // The policy ID to validate
+    string claim_type = 2;     // Type of claim: AUTO, HEALTH, HOME, LIFE, TRAVEL
+    double amount_requested = 3; // Amount being claimed
+}
+
+// Response message for policy validation
+message PolicyResponse {
+    bool is_covered = 1;           // Whether the claim type is covered
+    bool is_within_limit = 2;      // Whether the amount is within policy limits
+    string policy_status = 3;      // ACTIVE, EXPIRED, SUSPENDED
+    double coverage_limit = 4;     // Maximum coverage amount
+    double deductible = 5;         // Deductible amount
+    string message = 6;            // Human-readable message
+    string validation_code = 7;    // Validation reference code
+}
+
+// Request for policy ID only
+message PolicyIdRequest {
+    string policy_id = 1;
+}
+
+// Detailed policy information
+message PolicyDetails {
+    string policy_id = 1;
+    string holder_name = 2;
+    string policy_type = 3;
+    repeated string covered_claims = 4;  // List of covered claim types
+    double max_coverage = 5;
+    double deductible_percentage = 6;
+    string start_date = 7;
+    string end_date = 8;
+    string status = 9;
+}
+
+// Policy status check response
+message PolicyStatusResponse {
+    string policy_id = 1;
+    string status = 2;              // ACTIVE, EXPIRED, SUSPENDED, NOT_FOUND
+    string expiry_date = 3;
+    int32 days_until_expiry = 4;
+    string message = 5;
+}
