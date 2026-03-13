@@ -7,7 +7,7 @@ const PORT = 4002;
 
 // Database connection pool (connects to shared PostgreSQL)
 const pool = new Pool({
-    user: process.env.DB_USER || 'person_c',
+    user: process.env.DB_USER || 'insurance_admin',
     password: process.env.DB_PASSWORD || 'password123',
     host: process.env.DB_HOST || 'localhost',
     database: process.env.DB_NAME || 'insurance_db',

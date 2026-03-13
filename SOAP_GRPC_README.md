@@ -1,4 +1,4 @@
-# 🔐 Person B Services - Cyrine
+# 🔐 Services
 ## SOAP & gRPC Protocol Specialist
 
 Ce document décrit les services créés par **Cyrine** pour le système de traitement des réclamations d'assurance.

@@ -21,7 +21,7 @@ services:
       - insurance-network
 
   # ══════════════════════════════════════════════════════════════
-  # PERSON C (Sarra): GraphQL & REST Services
+  # GraphQL & REST Services
   # Port 4000 - Main API Gateway
   # ══════════════════════════════════════════════════════════════
   app:

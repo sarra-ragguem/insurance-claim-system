@@ -5,14 +5,20 @@
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- TABLE: claims 
--- Stores all insurance claims
+-- Stores all insurance claims with customer identity info
 -- ═══════════════════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS claims (
     claim_id SERIAL PRIMARY KEY,
+    -- Customer Identity (for SOAP verification)
+    national_id VARCHAR(20) NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    date_of_birth DATE NOT NULL,
+    -- Policy Info (for gRPC validation)
     policy_id VARCHAR(50) NOT NULL,
     claim_type VARCHAR(50) NOT NULL,
     amount_requested DECIMAL(12, 2) NOT NULL,
     description TEXT,
+    -- Workflow Status
     status VARCHAR(50) DEFAULT 'SUBMITTED',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

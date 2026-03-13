@@ -53,7 +53,7 @@ docker exec -it insurance-db psql -U insurance_admin -d insurance_db -c "SELECT 
 Detailed documentation and test cases are provided via the included Postman collection.
 
 ### 📝 Instructions:
-1.  **Import:** Load the file `Insurance_API_Tests.postman_collection.json` into Postman.
+1.  **Import:** Load the file `API Documentation.json` into Postman.
 2.  **Step 1 (Submission):** Run the `Submit Claim` Mutation (GraphQL). This creates the entry in the PostgreSQL database and returns a `claim_id`.
 3.  **Step 2 (Processing):** Use that generated ID to test the following:
     * **Status Update (REST):** Simulates the workflow moving the claim through the state machine.
