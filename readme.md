@@ -1,4 +1,4 @@
-# 🛡️ Insurance Claim Processing - Core Backend (Sarra's Branch)
+# Insurance Claim Processing - Core Backend (Sarra's Branch)
 
 This branch contains the **Core Microservices Infrastructure** for the End-to-End Insurance Claim Processing system. It handles data persistence, modern API interactions, and business rule evaluations.
 
