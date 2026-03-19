@@ -1,63 +1,78 @@
-# Insurance Claim Processing - Core Backend (Sarra's Branch)
-
-This branch contains the **Core Microservices Infrastructure** for the End-to-End Insurance Claim Processing system. It handles data persistence, modern API interactions, and business rule evaluations.
-
----
-
-## 1. Project Overview 
-This service acts as the central hub for the insurance workflow.
-* **Claim Submission & Tracking:** Implemented via **GraphQL** 
-* **Fraud Detection & Rules:** Implemented via **REST JSON** 
-* **Compensation Calculation:** Implemented via **REST JSON** 
-* **Database Management:** PostgreSQL implementation of the **State Machine** transitions.
-
----
-
-## 2. Architecture & Microservices  (50 pts)
-The system is fully containerized to ensure cross-platform compatibility and scalability.
-* **Container 1 (`insurance-db`):** PostgreSQL 15 database instance.
-* **Container 2 (`insurance-app`):** Node.js Express server hosting the GraphQL and REST layers.
+Ce projet implémente un système complet de gestion des sinistres d'assurance basé sur une architecture microservices. Il automatise le flux allant de la soumission du client jusqu'au paiement final, en intégrant des technologies hétérogènes (GraphQL, SOAP, gRPC, REST) et une orchestration BPMN.
 
 
 
----
 
-## 3. Getting Started 
-### Prerequisites
-* Docker & Docker Compose installed.
-* Postman (for API testing).
+##  Architecture Globale
 
-### How to Run
-1. Navigate to the `insurance_system` directory.
-2. Build and start the services in detached mode:
-   ```bash
-   docker-compose up --build -d
-### Available Endpoints
-| Service | Type | URL |
-| :--- | :--- | :--- |
-| **GraphQL Playground** | Interface | `http://localhost:4000/graphql` |
-| **Fraud Check** | REST POST | `http://localhost:4000/api/fraud/check` |
-| **Payout Calculation** | REST POST | `http://localhost:4000/api/calculate` |
-| **Status Update** | REST PATCH | `http://localhost:4000/api/claims/:id/status` |
+Le système est découpé en services autonomes communiquant via un réseau virtuel Docker. Chaque service est responsable d'une étape spécifique du métier.
 
----
+```text
+┌─────────────────────────────────────────────────────────────────────┐
+│                      MICROSERVICES ARCHITECTURE                     │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐  │
+│  │    PORT 4000     │  │    PORT 4001     │  │    PORT 4002     │  │
+│  │  GraphQL + REST  │  │   SOAP Service   │  │   gRPC Service   │  │
+│  │ (Core & Rules)   │  │    (Identity)    │  │     (Policy)     │  │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘  │
+│          │                    │                     │               │
+│          ▼                    ▼                     ▼               │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐  │
+│  │    PORT 4003-4007│  │    PORT 5432     │  │   BPMN ENGINE    │  │
+│  │ Business Services│  │  PostgreSQL DB   │  │ (Bonita/Activiti)│  │
+│  │   (REST JSON)    │  │  (State Machine) │  │  (Orchestrator)  │  │
+│  └──────────────────┘  └──────────────────┘  └──────────────────┘  │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
 
-## 4. Database Access 
-To manually verify that the State Machine is updating correctly, run the following command in your terminal:
-
-```bash
-docker exec -it insurance-db psql -U insurance_admin -d insurance_db -c "SELECT * FROM claims;"
 ```
-## 5. API Testing & Documentation 🧪 (30 pts)
 
-Detailed documentation and test cases are provided via the included Postman collection.
+##  Résumé des Services
 
-### 📝 Instructions:
-1.  **Import:** Load the file `API Documentation.json` into Postman.
-2.  **Step 1 (Submission):** Run the `Submit Claim` Mutation (GraphQL). This creates the entry in the PostgreSQL database and returns a `claim_id`.
-3.  **Step 2 (Processing):** Use that generated ID to test the following:
-    * **Status Update (REST):** Simulates the workflow moving the claim through the state machine.
-    * **Track Claim (GraphQL):** Verifies the current status and details of the claim.
-    * **Fraud/Calculation (REST):** Validates the business logic rules.
+| Service | Protocole | Port | Rôle Principal |
+|:---|:---|:---|:---|
+| **Claim Management** | GraphQL | 4000 | Soumission et suivi des dossiers par le client. |
+| **Business Rules** | REST | 4000 | Détection de fraude et calcul de compensation. |
+| **Identity Svc** | SOAP | 4001 | Vérification KYC (Know Your Customer). |
+| **Policy Svc** | gRPC | 4002 | Validation de la couverture et des plafonds. |
+| **Flow Services** | REST | 4003-7| Gestion documentaire, Expertises et Notifications. |
+| **Persistence** | SQL | 5432 | Base PostgreSQL (State Machine centralisée). |
 
----
+
+
+##  Démarrage Rapide
+
+### Prérequis
+* Docker & Docker Compose installés.
+* Postman (v10+ recommandé pour le support gRPC).
+
+### Installation et Lancement
+Pour démarrer l'ensemble de l'infrastructure en une seule commande :
+```bash
+docker compose up --build -d
+```
+
+
+##  Stratégie de Validation & Testing
+
+L'intégralité du système a été validée via **Postman** pour garantir l'interopérabilité des protocoles entre les différents services.
+
+Une collection unique regroupe l'ensemble des requêtes pour valider le flux :
+* **GraphQL** : Tests des mutations de soumission et des queries de suivi (Port 4000).
+* **REST** : Validation des règles métier (Fraude/Calcul) et mise à jour des statuts (Port 4000).
+* **SOAP** : Vérification de l'identité via l'enveloppe XML (Port 4001).
+
+Pour tester le service de police haute performance :
+1. Créez une nouvelle requête de type **gRPC** dans Postman.
+2. Utilisez l'URL : `http://localhost:4002/`.
+3. Sous l'onglet **Service Definition**, importez manuellement le fichier `policy.proto` situé dans le dossier `/policy-service`.
+4. Sélectionnez la méthode souhaitée (ex: `ValidatePolicy`) et cliquez sur **Invoke**.
+
+##  Fichiers Clés
+* `API_DOCS.md` : Documentation détaillée des endpoints et payloads.
+* `docker-compose.yml` : Orchestration complète des microservices.
+* `/policy-service/policy.proto` : Définition gRPC pour l'import Postman.
+* `/identity-service/identity.wsdl` : Contrat SOAP pour le connecteur BPMN.
+

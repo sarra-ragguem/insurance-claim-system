@@ -14,7 +14,7 @@
         "body": {
           "mode": "graphql",
           "graphql": {
-            "query": "mutation {\r\n  submitClaim(\r\n    policy_id: \"POL-999\",\r\n    claim_type: \"HEALTH\",\r\n    amount: 1500.00,\r\n    description: \"Medical checkup\"\r\n  ) {\r\n    claim_id\r\n    status\r\n  }\r\n}",
+            "query": "mutation {\r\n  submitClaim(\r\n    national_id: \"12345678\",\r\n    full_name: \"Ahmed Ben Ali\",\r\n    date_of_birth: \"1985-03-15\",\r\n    policy_id: \"POL-999\",\r\n    claim_type: \"HEALTH\",\r\n    amount: 1500.00,\r\n    description: \"Medical checkup\"\r\n  ) {\r\n    claim_id\r\n    status\r\n  }\r\n}",
             "variables": ""
           }
         },
@@ -121,6 +121,91 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "verifyIdentity",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "http://insurance-claim-system.com/identity/verifyIdentity"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <VerifyIdentityRequest xmlns=\"http://insurance-claim-system.com/identity\">\n      <nationalId>string</nationalId>\n      <fullName>string</fullName>\n      <dateOfBirth>string</dateOfBirth>\n    </VerifyIdentityRequest>\n  </soap:Body>\n</soap:Envelope>\n",
+          "options": {
+            "raw": {
+              "language": "xml"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{IdentityServicePortBaseUrl}}/soap/identity",
+          "host": [
+            "{{IdentityServicePortBaseUrl}}"
+          ],
+          "path": [
+            "soap",
+            "identity"
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "verifyIdentity response",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=utf-8"
+              },
+              {
+                "key": "SOAPAction",
+                "value": "http://insurance-claim-system.com/identity/verifyIdentity"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <VerifyIdentityRequest xmlns=\"http://insurance-claim-system.com/identity\">\n      <nationalId>string</nationalId>\n      <fullName>string</fullName>\n      <dateOfBirth>string</dateOfBirth>\n    </VerifyIdentityRequest>\n  </soap:Body>\n</soap:Envelope>\n",
+              "options": {
+                "raw": {
+                  "language": "xml"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4001/soap/identity",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4001",
+              "path": [
+                "soap",
+                "identity"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "xml",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "text/xml; charset=utf-8"
+            }
+          ],
+          "cookie": [],
+          "body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <VerifyIdentityResponse xmlns=\"http://insurance-claim-system.com/identity\">\n      <isValid>true</isValid>\n      <verificationCode>string</verificationCode>\n      <message>string</message>\n      <timestamp>string</timestamp>\n    </VerifyIdentityResponse>\n  </soap:Body>\n</soap:Envelope>\n"
+        }
+      ]
     }
   ]
 }
